@@ -45,6 +45,7 @@ public class Personnel {
     public void setTel(int tel) {
         this.tel = tel;
     }
+    
 
     public void setEmail(String email) {
         this.email = email;
@@ -98,6 +99,16 @@ public class Personnel {
         this.tel = tel;
         this.email = email;
     }
+    public Personnel(String login, String mdp, String nom, String prenom, String adresse, int tel, String email) {
+        this.login = login;
+        this.mdp = mdp;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.adresse = adresse;
+        this.tel = tel;
+        this.email = email;
+    }
+    
     
 
     

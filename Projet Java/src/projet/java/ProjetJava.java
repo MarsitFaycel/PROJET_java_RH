@@ -17,6 +17,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -28,7 +30,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -40,6 +44,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 
 /**
@@ -59,7 +64,7 @@ public class ProjetJava extends Application{
         
     }
     Scene scene1,scene2,scene3,scenePersonnel,sceneAjouterPersonnel;
-    
+    //private TableView<Personnel> table = new TableView<Personnel>();
         @Override
     public void start(Stage primaryStage) throws Exception {
         //To change body of generated methods, choose Tools | Templates.
@@ -190,7 +195,7 @@ public class ProjetJava extends Application{
             scene3=new Scene(gridPaneAcceuilRH,780,438);
             
             
-            
+            TableView<Personnel> table=new TableView();
             //scene personnel
             GridPane gridPanePersonnel=new GridPane();
             gridPanePersonnel.setVgap(20);
@@ -199,14 +204,24 @@ public class ProjetJava extends Application{
             gridPanePersonnel.getColumnConstraints().addAll(new ColumnConstraints(600),new ColumnConstraints(200));
             Button btnadd=new Button("ajouter");btnadd.setMinSize(100, 100);btnadd.setPadding(new Insets(10));
             btnadd.setOnAction(e2->primaryStage.setScene(sceneAjouterPersonnel));
-            Button btnedit=new Button("edit");btnedit.setMinSize(100, 100);
+            
+            Button btnemail=new Button("email");btnemail.setMinSize(100, 100);
+            
+            
             Button btnsupp=new Button("supprimer");btnsupp.setMinSize(100, 100);
-            Button btnexit=new Button("quiiter");btnexit.setMinSize(100, 50);
+            btnsupp.setOnAction(e->{ Personnel selectedItem = table.getSelectionModel().getSelectedItem();
+                DAOPersonnel daop=new DAOPersonnel();
+                daop.supprimerEmploye(selectedItem.getId());
+                table.getItems().remove(selectedItem);
+            
+            });
+            
+            Button btnexit=new Button("quiter");btnexit.setMinSize(100, 50);
             btnexit.setOnAction(e1->primaryStage.setScene(scene3));
 
             
             VBox vboxZone1=new VBox();vboxZone1.setSpacing(15);
-            vboxZone1.getChildren().addAll(btnadd,btnedit,btnsupp,btnexit);
+            vboxZone1.getChildren().addAll(btnadd,btnemail,btnsupp,btnexit);
             gridPanePersonnel.add(vboxZone1,1,0);
             
             
@@ -218,12 +233,12 @@ public class ProjetJava extends Application{
             gridPanePersonnel.add(hboxZone2, 0, 0);*/
             
             VBox vboxZon3=new VBox();vboxZon3.setSpacing(10);
-            TextField textsearch=new TextField("recherche");textsearch.setMinSize(20, 30);
+            TextField textsearch=new TextField();textsearch.setMinSize(20, 30);textsearch.setPromptText("recherche");
             
             //ListView<String> listViewPersonnel=new ListView<>();listViewPersonnel.setMinSize(300, 300);
             
             //tableau
-            TableView table=new TableView();
+            
             
             ObservableList<Personnel> data= FXCollections.observableArrayList(
             );
@@ -236,7 +251,7 @@ public class ProjetJava extends Application{
             
             ResultSet res= statement.executeQuery("select * from employe ");
             while (res.next()) { 
-                Personnel p=new Personnel("", "", 0, res.getString(2), res.getString(3), res.getString(4), res.getInt(5), res.getString(6));
+                Personnel p=new Personnel("", "", res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getInt(5), res.getString(6));
                         data.add(p);
             }
             } catch (SQLException ex) {
@@ -244,19 +259,66 @@ public class ProjetJava extends Application{
 
             }
             
+           
             
             
-            
-            
+            table.setEditable(true);
+            Callback<TableColumn, TableCell> cellFactory =
+             new Callback<TableColumn, TableCell>() {
+                 public TableCell call(TableColumn p) {
+                    return new EditingCell();
+                 }
+             };
             
             TableColumn nomColumn=new TableColumn("nom");
             nomColumn.setCellValueFactory(new PropertyValueFactory<Personnel,String>("nom"));
+            nomColumn.setCellFactory(cellFactory);
+            nomColumn.setOnEditCommit(new EventHandler<CellEditEvent<Personnel,String>>() {
+            @Override
+            public void handle(CellEditEvent<Personnel,String> t ) {
+                DAOPersonnel daop=new DAOPersonnel();
+                 daop.supprimerEmploye(((Personnel) t.getTableView().getItems().get(
+                        t.getTablePosition().getRow())
+                        ).getId());
+                ((Personnel) t.getTableView().getItems().get(
+                        t.getTablePosition().getRow())
+                        ).setNom(t.getNewValue());
+                
+                daop.addPersonnel(((Personnel) t.getTableView().getItems().get(
+                        t.getTablePosition().getRow())
+                        ));
+            }
+        });
+            
+            
+            
             
             TableColumn prenomColumn=new TableColumn("prenom");
             prenomColumn.setCellValueFactory(new PropertyValueFactory<Personnel,String>("prenom"));
+            prenomColumn.setCellFactory(cellFactory);
+            prenomColumn.setOnEditCommit(new EventHandler<CellEditEvent<Personnel,String>>() {
+            @Override
+            public void handle(CellEditEvent<Personnel,String> t ) {
+                DAOPersonnel daop=new DAOPersonnel();
+                 daop.supprimerEmploye(((Personnel) t.getTableView().getItems().get(
+                        t.getTablePosition().getRow())
+                        ).getId());
+                ((Personnel) t.getTableView().getItems().get(
+                        t.getTablePosition().getRow())
+                        ).setPrenom(t.getNewValue());
+                
+                daop.addPersonnel(((Personnel) t.getTableView().getItems().get(
+                        t.getTablePosition().getRow())
+                        ));
+            }
+        });
+            
+            
             
             TableColumn telColumn=new TableColumn("tel");
             telColumn.setCellValueFactory(new PropertyValueFactory<Personnel,String>("tel"));
+            
+            
             
             TableColumn adresseColumn=new TableColumn("adresse");
             adresseColumn.setCellValueFactory(new PropertyValueFactory<Personnel,String>("adresse"));
@@ -264,10 +326,12 @@ public class ProjetJava extends Application{
             TableColumn emailColumn=new TableColumn("email");
             emailColumn.setCellValueFactory(new PropertyValueFactory<Personnel,String>("email"));
             
-            
+            TableColumn idColumn=new TableColumn("idEmploye");
+            idColumn.setCellValueFactory(new PropertyValueFactory<Personnel,String>("id"));
+            idColumn.setVisible(false);
             //!!!!!!!
             table.setItems(data);
-            table.getColumns().addAll(nomColumn,prenomColumn,telColumn,adresseColumn,emailColumn);
+            table.getColumns().addAll(nomColumn,prenomColumn,telColumn,adresseColumn,emailColumn,idColumn);
             
            
             vboxZon3.getChildren().addAll(textsearch,table);
@@ -292,6 +356,16 @@ public class ProjetJava extends Application{
 
             Label labeltel=new Label("tel");
             TextField textFieldtel=new TextField();
+            textFieldtel.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                 if (!newValue.matches("\\d{0,8}([\\.]\\d{0,4})?")) {
+                    textFieldtel.setText(oldValue);
+                }
+            }
+        });
+            
 
             Label labelemail=new Label("email");
             TextField textFieldemail=new TextField();
@@ -315,7 +389,9 @@ public class ProjetJava extends Application{
             btnok1.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-             Personnel p=new Personnel("", "", 0, textFieldnom.getText(), textFieldprenom.getText(), textFieldadresse.getText(), 0, textFieldemail.getText());
+            Integer val=Integer.valueOf(textFieldtel.getText());
+                
+                Personnel p=new Personnel(textFieldlogin.getText(), textFieldmdp.getText(), textFieldnom.getText(), textFieldprenom.getText(), textFieldadresse.getText(), val, textFieldemail.getText());
                 DAOPersonnel dAOPersonnel=new DAOPersonnel();
                 dAOPersonnel.addPersonnel(p);
                                 textFieldnom.clear();
@@ -323,6 +399,8 @@ public class ProjetJava extends Application{
                                 textFieldadresse.clear();
                                 textFieldtel.clear();
                                 textFieldemail.clear();
+                                textFieldlogin.clear();
+                                textFieldmdp.clear();
                 data.add(p);
                 primaryStage.setScene(scenePersonnel);
             }
@@ -351,6 +429,74 @@ public class ProjetJava extends Application{
         primaryStage.show();
         
     }
+
+    private static class EditingCell extends TableCell<Personnel,String> {
+
+        private TextField textField;
+        
+        
+        public EditingCell() {
+        }
+        
+         @Override
+        public void startEdit() {
+            if (!isEmpty()) {
+                super.startEdit();
+                createTextField();
+                setText(null);
+                setGraphic(textField);
+                textField.selectAll();
+            }
+        }
+        @Override
+        public void cancelEdit() {
+            super.cancelEdit();
+ 
+            setText((String) getItem());
+            setGraphic(null);
+        }
+ 
+        @Override
+        public void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+ 
+            if (empty) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                if (isEditing()) {
+                    if (textField != null) {
+                        textField.setText(getString());
+                    }
+                    setText(null);
+                    setGraphic(textField);
+                } else {
+                    setText(getString());
+                    setGraphic(null);
+                }
+            }
+        }
+ 
+        private void createTextField() {
+            textField = new TextField(getString());
+            textField.setMinWidth(this.getWidth() - this.getGraphicTextGap()* 2);
+            textField.focusedProperty().addListener(new ChangeListener<Boolean>(){
+                @Override
+                public void changed(ObservableValue<? extends Boolean> arg0, 
+                    Boolean arg1, Boolean arg2) {
+                        if (!arg2) {
+                            commitEdit(textField.getText());
+                        }
+                }
+            });
+        }
+ 
+        private String getString() {
+            return getItem() == null ? "" : getItem().toString();
+        }
+    }
 }
+    
+
 
 

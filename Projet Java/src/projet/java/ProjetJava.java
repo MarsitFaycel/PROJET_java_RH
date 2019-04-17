@@ -45,7 +45,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-
+import com.calendarfx.model.Calendar;
+import com.calendarfx.model.Calendar.Style;
+import com.calendarfx.model.CalendarSource;
+import com.calendarfx.view.CalendarView;
 
 /**
  *
@@ -63,7 +66,7 @@ public class ProjetJava extends Application{
       
         
     }
-    Scene scene1,scene2,scene3,scenePersonnel,sceneAjouterPersonnel;
+    Scene scene1,scene2,scene3,scenePersonnel,sceneAjouterPersonnel,sceneCalendrier;
     //private TableView<Personnel> table = new TableView<Personnel>();
         @Override
     public void start(Stage primaryStage) throws Exception {
@@ -181,6 +184,7 @@ public class ProjetJava extends Application{
             
             Button btnClendar=new Button("Calandrier");btnClendar.setMinSize(161, 102);
             HBox hboxCalendar=new HBox();hboxCalendar.setPadding(new Insets(50, 100, 50, 100));
+             btnClendar.setOnAction(e->primaryStage.setScene(sceneCalendrier));
             hboxCalendar.getChildren().add(btnClendar);
             gridPaneAcceuilRH.add(hboxCalendar,0,3);
             
@@ -421,6 +425,19 @@ public class ProjetJava extends Application{
             
             
             
+           //calandrier
+           CalendarView calendarView=new CalendarView();
+            Calendar b=new Calendar("holiday");
+            b.setStyle(Style.STYLE1);
+            CalendarSource myCalendarSource = new CalendarSource("My Calendars");
+            myCalendarSource.getCalendars().addAll(b);
+
+                calendarView.getCalendarSources().addAll(myCalendarSource); 
+                    
+           
+             
+            
+            sceneCalendrier=new Scene(calendarView,780,438);
            
             
            

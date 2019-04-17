@@ -54,6 +54,8 @@ import com.calendarfx.view.CalendarView;
  *
  * @author OmaR
  */
+
+
 public class ProjetJava extends Application{
 
     /**
@@ -66,7 +68,14 @@ public class ProjetJava extends Application{
       
         
     }
+<<<<<<< HEAD
     Scene scene1,scene2,scene3,scenePersonnel,sceneAjouterPersonnel,sceneCalendrier;
+=======
+ 
+    
+ 
+    Scene scene1,scene2,scene3,scenePersonnel,sceneAjouterPersonnel;
+>>>>>>> 422091b495f5a07174a0600059dd3d9393226f80
     //private TableView<Personnel> table = new TableView<Personnel>();
         @Override
     public void start(Stage primaryStage) throws Exception {
@@ -88,7 +97,7 @@ public class ProjetJava extends Application{
             HBox hbox1=new HBox();hbox1.setPadding(new Insets(10));hbox1.setSpacing(10);
             //button1
             
-            String location= new String("C:\\Users\\heisenberg\\Desktop\\java RH\\Projet Java\\src");
+            String location= new String("C:\\Users\\OmaR\\Desktop\\git\\PROJET_java_RH\\Projet Java\\src\\");
             
             //image
             FileInputStream input1=new FileInputStream(location+"\\image\\user.png");
@@ -149,7 +158,7 @@ public class ProjetJava extends Application{
             gridpane.add(labelpass, 0, 2);
             gridpane.add(passwordField, 1, 2);
 
-           
+          
           
             
             //ok
@@ -160,6 +169,7 @@ public class ProjetJava extends Application{
             hbBtnreset.getChildren().add(btnok);
             gridpane.add(hbBtnreset, 1, 4);
            
+          
 
            
             
@@ -193,6 +203,9 @@ public class ProjetJava extends Application{
             hboxMission.getChildren().add(btnMission);
             gridPaneAcceuilRH.add(hboxMission,6,3);
             
+             
+      
+        
                     
 
                
@@ -239,7 +252,7 @@ public class ProjetJava extends Application{
             VBox vboxZon3=new VBox();vboxZon3.setSpacing(10);
             TextField textsearch=new TextField();textsearch.setMinSize(20, 30);textsearch.setPromptText("recherche");
             
-            //ListView<String> listViewPersonnel=new ListView<>();listViewPersonnel.setMinSize(300, 300);
+            ListView<String> listViewPersonnel=new ListView<>();listViewPersonnel.setMinSize(300, 300);
             
             //tableau
             

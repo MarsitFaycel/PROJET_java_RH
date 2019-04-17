@@ -3,4 +3,4 @@ projet java gestion RH : java-mysql-javaFX
 
 realise par: 
 Faysel MARSIT
-Omar Boubakri
+Mohamed Omar Boubakri

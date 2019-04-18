@@ -68,14 +68,14 @@ public class ProjetJava extends Application{
       
         
     }
-<<<<<<< HEAD
+
     Scene scene1,scene2,scene3,scenePersonnel,sceneAjouterPersonnel,sceneCalendrier;
-=======
+
  
     
  
-    Scene scene1,scene2,scene3,scenePersonnel,sceneAjouterPersonnel;
->>>>>>> 422091b495f5a07174a0600059dd3d9393226f80
+   
+
     //private TableView<Personnel> table = new TableView<Personnel>();
         @Override
     public void start(Stage primaryStage) throws Exception {
